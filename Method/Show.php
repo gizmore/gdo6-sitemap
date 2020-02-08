@@ -7,6 +7,8 @@ use GDO\Core\GDO_Module;
 use GDO\Install\Installer;
 use GDO\Util\Strings;
 use GDO\User\GDO_User;
+use GDO\Core\Method;
+use GDO\Cronjob\MethodCronjob;
 
 /**
  * Show all available module methods.
@@ -37,15 +39,28 @@ final class Show extends MethodPage
 		$user = GDO_User::current();
 		Installer::loopMethods($module, function($entry, $fullpath, $args=null) use($module, &$methods, $user) {
 			$method = $module->getMethod(Strings::rsubstrTo($entry, '.php'));
-			if ($method->hasUserPermission($user))
+			if ($this->showInSitemap($module, $method, $user))
 			{
-// 				if (empty($method->gdoParameters()))
-				{
-					$methods[] = $method;
-				}
+				$methods[] = $method;
 			}
 		});
 		return $methods;
+	}
+	
+	private function showInSitemap(GDO_Module $module, Method $method, GDO_User $user)
+	{
+		if (!$method->hasUserPermission($user))
+		{
+			return false;
+		}
+		
+		if ($method instanceof MethodCronjob)
+		{
+			return false;
+		}
+		
+		
+		
 	}
 	
 }

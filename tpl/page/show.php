@@ -11,7 +11,7 @@ foreach ($moduleMethods as $moduleName => $methods)
 	{
 		$module = ModuleLoader::instance()->getModule($moduleName);
 		echo "<ul>\n";
-		echo "<li><span>{$moduleName}</span>\n";
+		echo "<li><span>{$module->displayName()}</span>\n";
 		echo "<ul>\n";
 		foreach ($methods as $method)
 		{
