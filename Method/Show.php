@@ -59,8 +59,29 @@ final class Show extends MethodPage
 			return false;
 		}
 		
+		if ($method->isAjax())
+		{
+			return false;
+		}
 		
+		if (!$this->initDefaultMethod($module, $method, $user))
+		{
+			return false;
+		}
 		
+		return true;
+	}
+	
+	private function initDefaultMethod(GDO_Module $module, Method $method, GDO_User $user)
+	{
+		foreach ($method->gdoParameters() as $gdt)
+		{
+			if ($gdt->notNull)
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 	
 }
