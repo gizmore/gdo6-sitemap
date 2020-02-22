@@ -39,7 +39,7 @@ final class Show extends MethodPage
 		$user = GDO_User::current();
 		Installer::loopMethods($module, function($entry, $fullpath, $args=null) use($module, &$methods, $user) {
 			$method = $module->getMethod(Strings::rsubstrTo($entry, '.php'));
-			if ($this->showInSitemap($module, $method, $user))
+			if ($this->_showInSitemap($module, $method, $user))
 			{
 				$methods[] = $method;
 			}
@@ -47,9 +47,9 @@ final class Show extends MethodPage
 		return $methods;
 	}
 	
-	private function showInSitemap(GDO_Module $module, Method $method, GDO_User $user)
+	private function _showInSitemap(GDO_Module $module, Method $method, GDO_User $user)
 	{
-		if (!$method->hasUserPermission($user))
+		if (!$method->showInSitemap())
 		{
 			return false;
 		}
@@ -69,16 +69,24 @@ final class Show extends MethodPage
 			return false;
 		}
 		
+		if (!$method->hasUserPermission($user))
+		{
+			return false;
+		}
+		
 		return true;
 	}
 	
 	private function initDefaultMethod(GDO_Module $module, Method $method, GDO_User $user)
 	{
-		foreach ($method->gdoParameters() as $gdt)
+		if ($parameters = $method->gdoParameters())
 		{
-			if ($gdt->notNull)
+			foreach ($parameters as $gdt)
 			{
-				return false;
+				if ($gdt->notNull)
+				{
+					return false;
+				}
 			}
 		}
 		return true;
