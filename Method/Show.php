@@ -9,6 +9,9 @@ use GDO\Util\Strings;
 use GDO\User\GDO_User;
 use GDO\Core\Method;
 use GDO\Cronjob\MethodCronjob;
+use GDO\Language\Module_Language;
+use GDO\Language\Method\SwitchLanguage;
+use GDO\Language\GDO_Language;
 
 /**
  * Show all available module methods.
@@ -16,6 +19,8 @@ use GDO\Cronjob\MethodCronjob;
  */
 final class Show extends MethodPage
 {
+	public function showInSitemap() { return false; }
+	
 	protected function getTemplateVars()
 	{
 		return array(
@@ -38,6 +43,11 @@ final class Show extends MethodPage
 		$methods = array();
 		$user = GDO_User::current();
 		Installer::loopMethods($module, function($entry, $fullpath, $args=null) use($module, &$methods, $user) {
+			$method = $module->getMethod(Strings::rsubstrTo($entry, '.php'));
+			foreach ($this->getSitemapMethods($module, $method, $user) as $method)
+			{
+				$methods[] = $method;
+			}
 			$method = $module->getMethod(Strings::rsubstrTo($entry, '.php'));
 			if ($this->_showInSitemap($module, $method, $user))
 			{
@@ -90,6 +100,24 @@ final class Show extends MethodPage
 			}
 		}
 		return true;
+	}
+	
+	private function getSitemapMethods(GDO_Module $module, Method $method, GDO_User $user)
+	{
+		$methods = [];
+		if ($module === Module_Language::instance())
+		{
+			if ($method instanceof SwitchLanguage)
+			{
+				foreach (Module_Language::instance()->cfgSupported() as $lang)
+				{
+					$m = SwitchLanguage::make();
+					$m->gdoParameter('lang')->initial($lang->getISO());
+					$methods[] = $m;
+				}
+			}
+		}
+		return $methods;
 	}
 	
 }
