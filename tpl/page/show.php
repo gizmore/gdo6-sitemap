@@ -16,7 +16,7 @@ foreach ($moduleMethods as $moduleName => $methods)
 		foreach ($methods as $method)
 		{
 			$method instanceof Method;
-			$link = GDT_Link::make()->rawLabel($method->getDescription())->href($method->methodHref());
+			$link = GDT_Link::make()->labelRaw($method->getDescription())->href($method->methodHref());
 			echo "<li>{$link->renderCell()}</li>";
 		}
 		echo "</ul>\n";
