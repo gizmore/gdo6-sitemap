@@ -11,7 +11,7 @@ use GDO\Core\Method;
 use GDO\Cronjob\MethodCronjob;
 use GDO\Language\Module_Language;
 use GDO\Language\Method\SwitchLanguage;
-use GDO\Language\GDO_Language;
+use GDO\Language\GDT_Language;
 
 /**
  * Show all available module methods.
@@ -20,6 +20,13 @@ use GDO\Language\GDO_Language;
 final class Show extends MethodPage
 {
 	public function showInSitemap() { return false; }
+	
+	public function gdoParameters()
+	{
+	    return [
+	        GDT_Language::make('lang'),
+	    ];
+	}
 	
 	protected function getTemplateVars()
 	{
@@ -89,7 +96,7 @@ final class Show extends MethodPage
 	
 	private function initDefaultMethod(GDO_Module $module, Method $method, GDO_User $user)
 	{
-		if ($parameters = $method->gdoParameters())
+		if ($parameters = $method->gdoParameterCache())
 		{
 			foreach ($parameters as $gdt)
 			{
@@ -112,7 +119,7 @@ final class Show extends MethodPage
 				foreach (Module_Language::instance()->cfgSupported() as $lang)
 				{
 					$m = SwitchLanguage::make();
-					$m->gdoParameter('lang')->initial($lang->getISO());
+					$m->gdoParameter('lang', $lang->getISO());
 					$methods[] = $m;
 				}
 			}
