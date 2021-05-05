@@ -21,6 +21,8 @@ final class Show extends MethodPage
 {
 	public function showInSitemap() { return false; }
 	
+	public function getTitleLangKey() { return 'link_sitemap'; }
+	
 	public function gdoParameters()
 	{
 	    return [
