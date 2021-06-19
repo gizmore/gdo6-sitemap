@@ -23,12 +23,12 @@ final class Show extends MethodPage
 	
 	public function getTitleLangKey() { return 'link_sitemap'; }
 	
-	public function gdoParameters()
-	{
-	    return [
-	        GDT_Language::make('lang'),
-	    ];
-	}
+// 	public function gdoParameters()
+// 	{
+// 	    return [
+// 	        GDT_Language::make('lang'),
+// 	    ];
+// 	}
 	
 	protected function getTemplateVars()
 	{
@@ -121,7 +121,7 @@ final class Show extends MethodPage
 				foreach (Module_Language::instance()->cfgSupported() as $lang)
 				{
 					$m = SwitchLanguage::make();
-					$m->gdoParameter('lang', $lang->getISO());
+					$m->setGDOParamter('lang', $lang->getISO());
 					$methods[] = $m;
 				}
 			}
