@@ -11,11 +11,12 @@ use GDO\Core\Method;
 use GDO\Cronjob\MethodCronjob;
 use GDO\Language\Module_Language;
 use GDO\Language\Method\SwitchLanguage;
-use GDO\Language\GDT_Language;
 
 /**
  * Show all available module methods.
  * @author gizmore
+ * @version 6.11.0
+ * @since 6.10.4
  */
 final class Show extends MethodPage
 {
@@ -23,18 +24,11 @@ final class Show extends MethodPage
 	
 	public function getTitleLangKey() { return 'link_sitemap'; }
 	
-// 	public function gdoParameters()
-// 	{
-// 	    return [
-// 	        GDT_Language::make('lang'),
-// 	    ];
-// 	}
-	
 	protected function getTemplateVars()
 	{
-		return array(
+		return [
 			'moduleMethods' => $this->getModuleMethods(),
-		);
+		];
 	}
 	
 	private function getModuleMethods()
@@ -98,17 +92,25 @@ final class Show extends MethodPage
 	
 	private function initDefaultMethod(GDO_Module $module, Method $method, GDO_User $user)
 	{
-		if ($parameters = $method->gdoParameterCache())
+		try
 		{
-			foreach ($parameters as $gdt)
+			$method->init();
+			if ($parameters = $method->gdoParameterCache())
 			{
-				if ($gdt->notNull)
+				foreach ($parameters as $gdt)
 				{
-					return false;
+					if ($gdt->notNull)
+					{
+						return false;
+					}
 				}
 			}
+			return true;
 		}
-		return true;
+		catch (\Throwable $ex)
+		{
+		}
+		return false;
 	}
 	
 	private function getSitemapMethods(GDO_Module $module, Method $method, GDO_User $user)
