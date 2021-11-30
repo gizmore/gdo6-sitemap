@@ -123,7 +123,7 @@ final class Show extends MethodPage
 				foreach (Module_Language::instance()->cfgSupported() as $lang)
 				{
 					$m = SwitchLanguage::make();
-					$m->setGDOParamter('lang', $lang->getISO());
+					$m->setGDOParamter('_lang', $lang->getISO());
 					$methods[] = $m;
 				}
 			}
